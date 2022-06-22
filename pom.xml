@@ -12,7 +12,7 @@
 <!--        <ignite-core.version>[2.6,)</ignite-core.version>-->
     </properties>
 
-    <name>ariadne</name>ZZ
+    <name>ariadne</name>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -74,5 +74,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
