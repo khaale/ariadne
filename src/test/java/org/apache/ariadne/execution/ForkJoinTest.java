@@ -64,15 +64,26 @@ public class ForkJoinTest {
 
             );
 
+    private static long startTime;
+
+    private static long getTimestamp() {
+        return (System.currentTimeMillis() - startTime);
+    }
+
     private static String sleep(Builder<String> function, Node<String> node) {
         try {
+            System.out.printf("%s: [%s] Starting node %s..\n", getTimestamp(), Thread.currentThread().getId(), node.payload());
             Thread.sleep(MILLIS);
+            System.out.printf("%s: [%s] End node %s\n", getTimestamp(), Thread.currentThread().getId(), node.payload());
         } catch (InterruptedException ignored) {
         }
         return function.apply(node);
     }
 
-    private final BiFunction<String, String, String> combiner = (s1, s2) -> (s1 == null ? "" : s1 + " ") + s2;
+    private final BiFunction<String, String, String> combiner = (s1, s2) -> {
+        System.out.printf("%s: [%s] Combine %s and %s\n", getTimestamp(), Thread.currentThread().getId(), s1, s2);
+        return (s1 == null ? "" : s1 + " ") + s2;
+    };
 
     private final Builder<String> builder = node -> sleep(Node::payload, node);
 
@@ -96,6 +107,7 @@ public class ForkJoinTest {
     private void run(RecursiveTask<String> task) {
         for (int i : new int[]{1, 2, 4, 8}) {
             Stopwatch sw = new Stopwatch();
+            startTime = System.currentTimeMillis();
 
             String actual = new ForkJoinPool(i).invoke(task);
 
@@ -114,8 +126,9 @@ public class ForkJoinTest {
     private void runCompletableFuture(DAG<String> dagCF) {
         for (int i : new int[]{1, 2, 4, 8}) {
             Stopwatch sw = new Stopwatch();
+            startTime = System.currentTimeMillis();
             String actual = dagCF.compute(new ForkJoinPool(i));
-            System.out.printf("%d thread(s) %d secs %s%n", i, sw.seconds(), actual);
+            System.out.printf("%d thread(s) %d epochs %s%n", i, sw.seconds(), actual);
         }
     }
 
