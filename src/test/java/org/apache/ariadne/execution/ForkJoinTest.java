@@ -111,7 +111,7 @@ public class ForkJoinTest {
 
             String actual = new ForkJoinPool(i).invoke(task);
 
-            System.out.printf("%d thread(s) %d secs %s%n", i, sw.seconds(), actual);
+            System.out.printf("%d thread(s) %d epochs %s%n", i, sw.seconds(), actual);
             assertEquals(EXPECTED, actual);
 
             task.reinitialize();
@@ -124,7 +124,7 @@ public class ForkJoinTest {
     }
 
     private void runCompletableFuture(DAG<String> dagCF) {
-        for (int i : new int[]{1, 2, 4, 8}) {
+        for (int i : new int[]{1, 8, 16}) {
             Stopwatch sw = new Stopwatch();
             startTime = System.currentTimeMillis();
             String actual = dagCF.compute(new ForkJoinPool(i));
